@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitor Management System Login</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .page {
+      width: 100%;
+      min-height: calc(100vh - 56px);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 55%, #eef4ff 100%);
+    }
+
+    .illustration-panel {
+      position: relative;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .illustration-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.35), transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.25), transparent 32%);
+    }
+
+    .office-illustration {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 16px;
+      margin-bottom: 34px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .badge i {
+      color: #93c5fd;
+    }
+
+    .illustration-panel h1 {
+      font-size: 44px;
+      line-height: 1.12;
+      max-width: 560px;
+      margin-bottom: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .illustration-panel p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: #cbd5e1;
+      max-width: 540px;
+      margin-bottom: 42px;
+    }
+
+    .office-card {
+      width: 100%;
+      height: 390px;
+      border-radius: 28px;
+      background: linear-gradient(160deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .building {
+      position: absolute;
+      left: 56px;
+      bottom: 54px;
+      width: 230px;
+      height: 250px;
+      border-radius: 18px 18px 0 0;
+      background: #ffffff;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    .building::before {
+      content: "";
+      position: absolute;
+      inset: 26px;
+      background-image:
+        linear-gradient(#2563eb 0 0),
+        linear-gradient(#2563eb 0 0),
+        linear-gradient(#2563eb 0 0),
+        linear-gradient(#2563eb 0 0),
+        linear-gradient(#2563eb 0 0),
+        linear-gradient(#2563eb 0 0);
+      background-size: 34px 34px;
+      background-repeat: no-repeat;
+      background-position:
+        0 0,
+        60px 0,
+        120px 0,
+        0 70px,
+        60px 70px,
+        120px 70px;
+      opacity: 0.85;
+    }
+
+    .reception-desk {
+      position: absolute;
+      right: 54px;
+      bottom: 58px;
+      width: 260px;
+      height: 92px;
+      border-radius: 18px;
+      background: #2563eb;
+      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.35);
+    }
+
+    .person {
+      position: absolute;
+      right: 140px;
+      bottom: 150px;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
+
+    .person::before {
+      content: "";
+      position: absolute;
+      left: -24px;
+      top: 82px;
+      width: 122px;
+      height: 110px;
+      border-radius: 46px 46px 16px 16px;
+      background: #dbeafe;
+    }
+
+    .plant {
+      position: absolute;
+      right: 38px;
+      bottom: 150px;
+      width: 70px;
+      height: 130px;
+      border-radius: 0 0 14px 14px;
+      background: #1e293b;
+    }
+
+    .plant::before {
+      content: "";
+      position: absolute;
+      left: -18px;
+      top: -48px;
+      width: 110px;
+      height: 90px;
+      background: #60a5fa;
+      border-radius: 60% 40% 55% 45%;
+    }
+
+    .login-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 470px;
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 42px;
+      box-shadow: 0 30px 90px rgba(15, 23, 42, 0.18);
+      border: 1px solid #e5e7eb;
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 22px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #0f172a, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 30px;
+      box-shadow: 0 14px 32px rgba(37, 99, 235, 0.28);
+    }
+
+    .login-card h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+
+    .secure-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap i {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 15px;
+    }
+
+    .input-wrap .left-icon {
+      left: 16px;
+    }
+
+    .input-wrap .right-icon {
+      right: 16px;
+      cursor: pointer;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 52px;
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      background: #f8fafc;
+      padding: 0 16px;
+      font-size: 15px;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input {
+      padding-left: 46px;
+    }
+
+    input.password-input {
+      padding-right: 46px;
+    }
+
+    select {
+      appearance: none;
+      cursor: pointer;
+      background-image: linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%);
+      background-position: calc(100% - 22px) 22px, calc(100% - 16px) 22px;
+      background-size: 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0 26px;
+      font-size: 14px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .remember input {
+      width: 16px;
+      height: 16px;
+      accent-color: #2563eb;
+    }
+
+    .forgot {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .forgot:hover {
+      text-decoration: underline;
+    }
+
+    .login-btn {
+      height: 56px;
+      border-radius: 16px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 16px 34px rgba(37, 99, 235, 0.34);
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .login-btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 980px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .illustration-panel {
+        display: none;
+      }
+
+      .login-panel {
+        min-height: calc(100vh - 56px);
+        padding: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid">
+      <span class="navbar-brand mb-0 h1">
+        <i class="fa-solid fa-building-shield"></i>
+        Visitor Management System
+      </span>
+    </div>
+  </nav>
+
+  <main class="page">
+    <section class="illustration-panel">
+      <div class="office-illustration">
+        <div class="badge">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Secure Access</span>
+        </div>
+
+        <h1>Modern Visitor Access for Corporate Workplaces</h1>
+        <p>
+          Manage guests, employees, reception workflows, and secure entry with a polished enterprise visitor management experience.
+        </p>
+
+        <div class="office-card">
+          <div class="building"></div>
+          <div class="person"></div>
+          <div class="reception-desk"></div>
+          <div class="plant"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-card">
+        <div class="logo">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+
+        <h2>Visitor Management System</h2>
+        <p class="subtitle">Welcome Back</p>
+
+        <div class="alert alert-primary text-center py-2 mb-4" role="alert">
+          <i class="fa-solid fa-user-shield"></i>
+          Authorized Personnel Only
+        </div>
+
+        <div class="text-center mb-3">
+          <span class="badge bg-success fs-6">System Online</span>
+        </div>
+
+        <div class="secure-row">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Secure Access</span>
+        </div>
+
+        <div class="card bg-light border-0 mb-3">
+          <div class="card-body text-center">
+            <small>
+              Visitor Management System v1.0<br>
+              Secure Corporate Access Portal
+            </small>
+          </div>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="role">Select Role</label>
+            <select id="role" name="role">
+              <option>Admin</option>
+              <option>Employee</option>
+              <option>Receptionist</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-user left-icon"></i>
+              <input id="username" type="text" placeholder="Enter your username" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-lock left-icon"></i>
+              <input
+                id="password"
+                class="password-input"
+                type="password"
+                placeholder="Enter your password"
+              />
+              <i class="fa-solid fa-eye right-icon" onclick="togglePassword()"></i>
+            </div>
+          </div>
+
+          <div class="options">
+            <label class="remember">
+              <input type="checkbox" />
+              Remember Me
+            </label>
+
+            <a href="#" class="forgot">Forgot Password?</a>
+          </div>
+
+          <p id="errorMsg" style="color:red; margin-bottom:10px; text-align:center;"></p>
+
+          <button type="submit" class="btn btn-primary w-100 login-btn">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+          </button>
+        </form>
+
+        <div class="text-center mt-4">
+          <small>
+            <i class="fa-solid fa-envelope"></i> support@vms.com
+            &nbsp; | &nbsp;
+            <i class="fa-solid fa-phone"></i> +91 9876543210
+          </small>
+        </div>
+
+        <div class="footer">
+          © 2026 Visitor Management System. All Rights Reserved.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function togglePassword() {
+      const password = document.getElementById("password");
+      const icon = document.querySelector(".right-icon");
+
+      if (password.type === "password") {
+        password.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        password.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      let username = document.getElementById("username").value.trim();
+      let password = document.getElementById("password").value.trim();
+      let errorMsg = document.getElementById("errorMsg");
+
+      errorMsg.textContent = "";
+
+      if (username === "" || password === "") {
+        errorMsg.textContent = "Please enter both username and password.";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          errorMsg.style.color = "green";
+          errorMsg.textContent = data.message;
+
+          if (data.role === "Admin") {
+            window.location.href = "{{ url_for('dashboard') }}";
+          }
+          else if (data.role === "Receptionist") {
+            window.location.href = "{{ url_for('reception') }}";
+          }
+          else if (data.role === "Employee") {
+            window.location.href = "{{ url_for('employee') }}";
+          }
+
+        } else {
+          errorMsg.style.color = "red";
+          errorMsg.textContent = data.message;
+        }
+
+      } catch (error) {
+        errorMsg.style.color = "red";
+        errorMsg.textContent = "Cannot connect to server.";
+      }
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitor Management Dashboard</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .dashboard {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 270px 1fr;
+    }
+
+    .sidebar {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 26px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+      padding: 0 8px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text h2 {
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .logo-text span {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .nav-item i {
+      width: 20px;
+      text-align: center;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .logout {
+      margin-top: 24px;
+      color: #fecaca;
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 82px;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 0 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search {
+      width: 420px;
+      position: relative;
+    }
+
+    .search i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    .search input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 0 16px 0 46px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search input:focus {
+      border-color: #ffffff;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .notification {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      font-size: 18px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .notification::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      right: 11px;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .profile h4 {
+      font-size: 14px;
+      color: #ffffff;
+    }
+
+    .profile span {
+      font-size: 12px;
+      color: #dbeafe;
+    }
+
+    .content {
+      padding: 34px;
+    }
+
+    .welcome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .welcome h1 {
+      font-size: 30px;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .welcome p {
+      color: #64748b;
+      font-size: 15px;
+    }
+
+    .date-pill {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: white;
+      padding: 25px;
+      border-radius: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 18px 40px rgba(37, 99, 235, 0.22);
+    }
+
+    .welcome-banner h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome-banner p {
+      color: #dbeafe;
+      font-size: 15px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+      position: relative;
+      text-decoration: none;
+      display: block;
+    }
+
+    .stat-card:nth-child(1) {
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+      color: white;
+    }
+
+    .stat-card:nth-child(2) {
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: white;
+    }
+
+    .stat-card:nth-child(3) {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      color: white;
+    }
+
+    .stat-card:nth-child(4) {
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+      color: white;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      right: -36px;
+      top: -36px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-change {
+      font-size: 12px;
+      color: #ffffff;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.22);
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
+
+    .stat-card h3 {
+      font-size: 28px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-card p {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 14px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 22px;
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h3 {
+      font-size: 18px;
+    }
+
+    .card-header a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 18px 24px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    th {
+      color: #64748b;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: #f8fafc;
+    }
+
+    td {
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .visitor {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .visitor-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #dbeafe;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .status {
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .checked {
+      color: #15803d;
+      background: #dcfce7;
+    }
+
+    .pending {
+      color: #b45309;
+      background: #fef3c7;
+    }
+
+    .scheduled {
+      color: #1d4ed8;
+      background: #dbeafe;
+    }
+
+    .side-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .quick-actions {
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .action-btn {
+      height: 52px;
+      border: 1px solid #dbeafe;
+      border-radius: 14px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 0 16px;
+      transition: 0.2s ease;
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      background: #2563eb;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .appointments {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .appointment {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .appointment:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .time {
+      min-width: 74px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #2563eb;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .appointment h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .appointment p {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .chart-card {
+      margin-top: 24px;
+    }
+
+    .chart {
+      height: 280px;
+      padding: 28px 26px 24px;
+      display: flex;
+      align-items: end;
+      gap: 18px;
+    }
+
+    .bar-wrap {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      gap: 10px;
+      text-align: center;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bar {
+      width: 100%;
+      border-radius: 12px 12px 6px 6px;
+      background: linear-gradient(180deg, #2563eb, #93c5fd);
+      min-height: 42px;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+    }
+
+    @media (max-width: 1200px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .search {
+        width: 320px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div>
+        <a href="{{ url_for('dashboard') }}" class="logo" style="text-decoration:none; color:inherit;">
+          <div class="logo-icon">
+            <i class="fa-solid fa-building-shield"></i>
+          </div>
+          <div class="logo-text">
+            <h2>VMS Portal</h2>
+            <span>Corporate Access</span>
+          </div>
+        </a>
+
+        <nav class="nav-menu">
+          <a href="{{ url_for('dashboard') }}" class="nav-item active">
+            <i class="fa-solid fa-chart-pie"></i>
+            Dashboard
+          </a>
+
+          <a href="{{ url_for('register') }}" class="nav-item">
+            <i class="fa-solid fa-user-plus"></i>
+            Visitor Registration
+          </a>
+
+          <a href="{{ url_for('history') }}" class="nav-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            Visitor History
+          </a>
+
+          <a href="{{ url_for('checkin_checkout') }}" class="nav-item">
+            <i class="fa-solid fa-right-left"></i>
+            Check-In / Check-Out
+          </a>
+
+          <a href="{{ url_for('reports') }}" class="nav-item">
+            <i class="fa-solid fa-file-lines"></i>
+            Reports
+          </a>
+
+          <a href="{{ url_for('reports') }}" class="nav-item">
+            <i class="fa-solid fa-chart-line"></i>
+            Analytics
+          </a>
+
+          <a href="settings.html" class="nav-item">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+          </a>
+        </nav>
+      </div>
+
+      <a href="{{ url_for('logout') }}" class="nav-item logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        Logout
+      </a>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search visitors, hosts, passes..." />
+        </div>
+
+        <div class="top-actions">
+          <button class="notification">
+            <i class="fa-regular fa-bell"></i>
+          </button>
+
+          <a href="profile.html" class="profile">
+            <div class="avatar">AD</div>
+            <div>
+              <h4>Admin User</h4>
+              <span>Security Manager</span>
+            </div>
+          </a>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="welcome">
+          <div>
+            <h1>Welcome back, Admin</h1>
+            <p>Here is today's visitor activity and access overview.</p>
+          </div>
+
+          <div class="date-pill">
+            <i class="fa-regular fa-calendar"></i>
+            <span id="currentDate"></span>
+          </div>
+        </div>
+
+        <div class="welcome-banner">
+          <h2>Visitor Management System</h2>
+          <p>Monitor visitor activities, approvals and reports in real time.</p>
+        </div>
+
+        <div class="stats-grid">
+          <a href="{{ url_for('history') }}" class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <span class="stat-change">Live</span>
+            </div>
+            <h3>{{ total_visitors }}</h3>
+            <p>Total Visitors</p>
+          </a>
+
+          <a href="{{ url_for('history') }}" class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon">
+                <i class="fa-solid fa-calendar-day"></i>
+              </div>
+              <span class="stat-change">Today</span>
+            </div>
+            <h3>{{ today_visitors }}</h3>
+            <p>Today's Visitors</p>
+          </a>
+
+          <a href="{{ url_for('history') }}" class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon">
+                <i class="fa-solid fa-hourglass-half"></i>
+              </div>
+              <span class="stat-change">Live</span>
+            </div>
+            <h3>{{ pending_visitors }}</h3>
+            <p>Pending Approvals</p>
+          </a>
+
+          <a href="{{ url_for('checkin_checkout') }}" class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon">
+                <i class="fa-solid fa-id-badge"></i>
+              </div>
+              <span class="stat-change">Active</span>
+            </div>
+            <h3>{{ checked_in_visitors }}</h3>
+            <p>Checked-In Visitors</p>
+          </a>
+        </div>
+
+        <div class="dashboard-grid">
+          <div>
+            <section class="card">
+              <div class="card-header">
+                <h3>Recent Visitors</h3>
+                <a href="{{ url_for('history') }}">View All</a>
+              </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <th>Visitor</th>
+                    <th>Host</th>
+                    <th>Purpose</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for v in recent_visitors %}
+                  <tr>
+                    <td>
+                      <div class="visitor">
+                        <div class="visitor-avatar">{{ v.name[:2]|upper }}</div>
+                        {{ v.name }}
+                      </div>
+                    </td>
+                    <td>{{ v.host or "-" }}</td>
+                    <td>{{ v.purpose or "-" }}</td>
+                    <td>{{ v.visit_time or "-" }}</td>
+                    <td>
+                      {% if v.status == "Checked In" %}
+                        <span class="status checked">Checked In</span>
+                      {% elif v.status == "Pending Check-In" %}
+                        <span class="status pending">Pending</span>
+                      {% elif v.status == "Checked Out" %}
+                        <span class="status scheduled">Checked Out</span>
+                      {% else %}
+                        <span class="status scheduled">{{ v.status }}</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </section>
+
+            <section class="card chart-card">
+              <div class="card-header">
+                <h3>Visitor Trends</h3>
+                <a href="{{ url_for('reports') }}">This Week</a>
+              </div>
+
+              <div class="chart">
+                <div class="bar-wrap">
+                  <div class="bar" style="height: 48%;"></div>
+                  Mon
+                </div>
+                <div class="bar-wrap">
+                  <div class="bar" style="height: 66%;"></div>
+                  Tue
+                </div>
+                <div class="bar-wrap">
+                  <div class="bar" style="height: 52%;"></div>
+                  Wed
+                </div>
+                <div class="bar-wrap">
+                  <div class="bar" style="height: 78%;"></div>
+                  Thu
+                </div>
+                <div class="bar-wrap">
+                  <div class="bar" style="height: 88%;"></div>
+                  Fri
+                </div>
+                <div class="bar-wrap">
+                  <div class="bar" style="height: 42%;"></div>
+                  Sat
+                </div>
+                <div class="bar-wrap">
+                  <div class="bar" style="height: 36%;"></div>
+                  Sun
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <aside class="side-stack">
+            <section class="card">
+              <div class="card-header">
+                <h3>Quick Actions</h3>
+              </div>
+
+              <div class="quick-actions">
+                <a href="{{ url_for('register') }}" class="action-btn">
+                  <i class="fa-solid fa-user-plus"></i>
+                  Register New Visitor
+                </a>
+
+                <a href="{{ url_for('checkin_checkout') }}" class="action-btn">
+                  <i class="fa-solid fa-right-to-bracket"></i>
+                  Check-In Visitor
+                </a>
+
+                <a href="{{ url_for('checkin_checkout') }}" class="action-btn">
+                  <i class="fa-solid fa-id-card"></i>
+                  Generate Visitor Pass
+                </a>
+
+                <a href="{{ url_for('reports') }}" class="action-btn">
+                  <i class="fa-solid fa-chart-column"></i>
+                  View Reports
+                </a>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h3>Upcoming Appointments</h3>
+                <a href="{{ url_for('history') }}">View</a>
+              </div>
+
+              <div class="appointments">
+                {% for v in recent_visitors[:3] %}
+                <div class="appointment">
+                  <div class="time">{{ v.visit_time or "-" }}</div>
+                  <div>
+                    <h4>{{ v.name }}</h4>
+                    <p>{{ v.purpose or "Visitor appointment" }} with {{ v.host or "assigned host" }}.</p>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const date = new Date();
+    document.getElementById("currentDate").innerHTML = date.toDateString();
+
+    const hour = new Date().getHours();
+
+    let greeting = "Welcome";
+
+    if (hour < 12) {
+      greeting = "Good Morning";
+    } else if (hour < 18) {
+      greeting = "Good Afternoon";
+    } else {
+      greeting = "Good Evening";
+    }
+
+    document.querySelector(".welcome h1").innerHTML = greeting + ", Admin";
+
+    document.querySelector(".notification").addEventListener("click", function() {
+      alert("No new notifications");
+    });
+  </script>
+</body>
+</html>
+```
