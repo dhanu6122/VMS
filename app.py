@@ -9,16 +9,19 @@ app = Flask(__name__)
 CORS(app)
 
 
+import os
+
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Dhanu@26",
-        database="vms_db"
+        host=os.getenv("thomas.proxy.rlwy.net"),
+        user=os.getenv("root"),
+        password=os.getenv("FHohLRKPDraKjBnsDYNDCPXKCiPyihPM"),
+        database=os.getenv("railway"),
+        port=int(os.getenv("57765"))
     )
 
 
-def init_db():
+#def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -401,5 +404,5 @@ def api_checkout(visitor_id):
 
 # ---------------- START ----------------
 if __name__ == "__main__":
-    init_db()
-    app.run(debug=True)
+    #init_db()
+    app.run(debug=True) 
