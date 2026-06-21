@@ -570,8 +570,12 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Redirect immediately without showing success message
-          window.location.href = "/dashboard";
+          if (data.message === "Login Success") {
+            window.location.href = window.location.origin + "/dashboard";
+          } else {
+            errorMsg.style.color = "red";
+            errorMsg.textContent = "Login failed";
+          }
         } else {
           errorMsg.style.color = "red";
           errorMsg.textContent = data.message;
