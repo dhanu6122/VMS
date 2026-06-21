@@ -511,7 +511,7 @@
 
         <div class="text-center mt-4">
           <small>
-            <i class="fa-solid fa-envelope"></i> support@vms.com
+            <i class="fa-solid fa-envelope"></i> [support@vms.com](mailto:support@vms.com)
             &nbsp; | &nbsp;
             <i class="fa-solid fa-phone"></i> +91 9876543210
           </small>
@@ -550,12 +550,13 @@
       errorMsg.textContent = "";
 
       if (username === "" || password === "") {
+        errorMsg.style.color = "red";
         errorMsg.textContent = "Please enter both username and password.";
         return;
       }
 
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/login", {
+        const response = await fetch("/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -569,19 +570,8 @@
         const data = await response.json();
 
         if (response.ok) {
-          errorMsg.style.color = "green";
-          errorMsg.textContent = data.message;
-
-          if (data.role === "Admin") {
-            window.location.href = "{{ url_for('dashboard') }}";
-          }
-          else if (data.role === "Receptionist") {
-            window.location.href = "{{ url_for('reception') }}";
-          }
-          else if (data.role === "Employee") {
-            window.location.href = "{{ url_for('employee') }}";
-          }
-
+          // Redirect immediately without showing success message
+          window.location.href = "/dashboard";
         } else {
           errorMsg.style.color = "red";
           errorMsg.textContent = data.message;
@@ -591,7 +581,6 @@
         errorMsg.style.color = "red";
         errorMsg.textContent = "Cannot connect to server.";
       }
-
     });
   </script>
 </body>

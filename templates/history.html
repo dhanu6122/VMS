@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -197,7 +196,7 @@
         <p>View and search previous visitor records.</p>
       </div>
 
-      <a href="{{ url_for('dashboard') }}" class="btn btn-dashboard">
+      <a href="/dashboard" class="btn btn-dashboard">
         <i class="fa-solid fa-arrow-left"></i>
         Back to Dashboard
       </a>
@@ -260,17 +259,17 @@
               </td>
               <td>
                 {% set uploaded_files = [
-                  v.get("photoUpload"),
-                  v.get("idProofUpload"),
-                  v.get("documentUpload"),
-                  v.get("photo_filename"),
-                  v.get("id_proof_filename"),
-                  v.get("document_filename"),
-                  v.get("uploaded_file"),
-                  v.get("filename"),
-                  v.get("file_name"),
-                  v.get("file_path"),
-                  v.get("document")
+                  v.photoUpload,
+                  v.idProofUpload,
+                  v.documentUpload,
+                  v.photo_filename,
+                  v.id_proof_filename,
+                  v.document_filename,
+                  v.uploaded_file,
+                  v.filename,
+                  v.file_name,
+                  v.file_path,
+                  v.document
                 ] %}
 
                 {% set ns = namespace(has_file=false) %}
